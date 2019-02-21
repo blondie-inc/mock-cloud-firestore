@@ -56,6 +56,10 @@ export default class DocumentSnapshot {
             return date;
           },
         };
+      } else if (this._isObject(data[key])) {
+        data[key] = this._getData(data[key]);
+      } else if (Array.isArray(data[key])) {
+        data[key] = data[key].map((item) => this._getData(item));
       }
     }
 
@@ -80,5 +84,9 @@ export default class DocumentSnapshot {
     });
 
     return ref;
+  }
+
+  _isObject(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
   }
 }
