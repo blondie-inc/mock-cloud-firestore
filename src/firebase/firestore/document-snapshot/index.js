@@ -20,7 +20,7 @@ export default class DocumentSnapshot {
   }
 
   data() {
-    return this.exists ? this._getData() : undefined;
+    return this.exists ? this._getData(this._data) : undefined;
   }
 
   get(path) {
@@ -28,7 +28,7 @@ export default class DocumentSnapshot {
       return undefined;
     }
     const keys = path.split('.');
-    let data = this._getData();
+    let data = this._getData(this._data);
 
     for (const key of keys) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -42,8 +42,8 @@ export default class DocumentSnapshot {
     return data;
   }
 
-  _getData() {
-    const data = Object.assign({}, this._data);
+  _getData(_data) {
+    const data = Object.assign({}, _data);
 
     for (const key of Object.keys(data)) {
       if (typeof data[key] === 'string' && data[key].startsWith('__ref__:')) {
