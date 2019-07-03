@@ -3,12 +3,17 @@ import CollectionReference from './collection-reference';
 import WriteBatch from './write-batch';
 import getOrSetDataNode from '../../utils/get-or-set-data-node';
 import validateReference from '../../utils/reference';
+import DocumentReference from './document-reference';
+import Query from './query';
 
 export default class Firestore {
   constructor(data, options) {
     this._data = data;
     this._options = options || {};
     this._listeners = [];
+
+    this.DocumentReference = DocumentReference;
+    this.Query = Query;
   }
 
   _dataChanged() {
