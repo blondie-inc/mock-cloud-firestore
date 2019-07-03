@@ -14,6 +14,7 @@ export default class Query {
     this._data = data;
     this._collection = collection;
     this._operations = [];
+    this._query = this;
   }
 
   _querySnapshot() {
@@ -162,5 +163,9 @@ export default class Query {
 
   _getOrder() {
     return this._operations.find(operation => operation.type === 'orderBy').param;
+  }
+
+  toString() {
+    return JSON.stringify(this._operations);
   }
 }
