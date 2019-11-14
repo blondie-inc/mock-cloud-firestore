@@ -41,26 +41,38 @@ export default class DocumentSnapshot {
 
     return data;
   }
+  
+  _getValue(_value) {
+    if (typeof _value === 'string' && _value.startsWith('__ref__:')) {
+      return this._buildRefFromPath(this.ref.firestore, _value.replace('__ref__:', ''));
+    }
+    
+    if (_value instanceof Date) {
+      const date = _value;
+
+      return {
+        toDate() {
+          return date;
+        },
+      };
+    }
+    
+    if (this._isObject(_value)) {
+      return this._getData(_value);
+    }
+    
+    if (Array.isArray(_value)) {
+      return _value.map((item) => this._getValue(item));
+    }
+    
+    return _value;
+  }
 
   _getData(_data) {
     const data = Object.assign({}, _data);
 
     for (const key of Object.keys(data)) {
-      if (typeof data[key] === 'string' && data[key].startsWith('__ref__:')) {
-        data[key] = this._buildRefFromPath(this.ref.firestore, data[key].replace('__ref__:', ''));
-      } else if (data[key] instanceof Date) {
-        const date = data[key];
-
-        data[key] = {
-          toDate() {
-            return date;
-          },
-        };
-      } else if (this._isObject(data[key])) {
-        data[key] = this._getData(data[key]);
-      } else if (Array.isArray(data[key])) {
-        data[key] = data[key].map((item) => this._getData(item));
-      }
+      data[key] = this._getValue(data[key]);
     }
 
     delete data.__isDirty__;
